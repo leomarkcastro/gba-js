@@ -81,7 +81,7 @@ export default function GBALoader({ record }) {
     }
   }
 
-  async function loadGame() {
+  async function loadGame(throttle) {
     // =================================
     console.log("Loading GBA Game");
     // =================================
@@ -99,6 +99,9 @@ export default function GBALoader({ record }) {
     const gameBuf = await gameResponse.arrayBuffer();
 
     gba.current.setRom(gameBuf);
+    if (throttle) {
+      gba.current.throttle = throttle;
+    }
   }
 
   async function loadSAV() {
@@ -229,6 +232,24 @@ export default function GBALoader({ record }) {
     console.log(" >>> Starting GBA Game");
     // =================================
     await loadGame();
+    // await loadSAV();
+    if (saveDataToInject) {
+      await parseAndInjectSaveData(saveDataToInject);
+      setSaveDataToInject(null);
+    }
+    await runGame();
+    await drawPixel();
+    await interceptKeyPress();
+    setGameRunning(true);
+    gameRunningRef.current = true;
+    saveRoutine();
+  }
+
+  async function startGameMobile() {
+    // =================================
+    console.log(" >>> Starting GBA Game");
+    // =================================
+    await loadGame(Math.floor((16 * 2) / 3));
     // await loadSAV();
     if (saveDataToInject) {
       await parseAndInjectSaveData(saveDataToInject);
@@ -399,6 +420,9 @@ export default function GBALoader({ record }) {
           <>
             <button className="d-btn d-btn-primary" onClick={startGame}>
               Play
+            </button>{" "}
+            <button className="d-btn d-btn-primary" onClick={startGameMobile}>
+              Play Mobile
             </button>
           </>
         ) : (
@@ -419,10 +443,9 @@ export default function GBALoader({ record }) {
         viewBox="0 0 320 265"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="flex w-full h-[37vh] md:flex-0 md:hidden"
+        className="flex w-full h-[37vh] md:flex-0 md:hidden bg-gray-600/75"
         preserveAspectRatio="xMidYMid meet"
       >
-        <rect width="320" height="265" fill="#b6b6b6" />
         {/* A */}
         <circle
           cx="258"
