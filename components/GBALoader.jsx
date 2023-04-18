@@ -127,10 +127,14 @@ export default function GBALoader({ record }) {
   }
 
   async function drawPixel() {
-    const ctx = canvasRef.current.getContext("2d");
     // resize canvas to match parent
 
-    setInterval(() => {
+    drawPixelRoutine();
+  }
+
+  function drawPixelRoutine() {
+    setTimeout(() => {
+      const ctx = canvasRef.current.getContext("2d");
       const gbaPixelData = gba.current.context.pixelData;
       const myImageData = ctx.createImageData(
         gbaPixelData.width,
@@ -139,6 +143,7 @@ export default function GBALoader({ record }) {
       myImageData.data.set(gbaPixelData.data);
 
       ctx.putImageData(myImageData, 0, 0);
+      requestAnimationFrame(drawPixelRoutine);
     }, 1000 / 60);
   }
 
