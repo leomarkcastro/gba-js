@@ -249,7 +249,7 @@ export default function GBALoader({ record }) {
     // =================================
     console.log(" >>> Starting GBA Game");
     // =================================
-    await loadGame(Math.floor((16 * 2) / 3));
+    await loadGame(Math.floor((16 * 2) / 4));
     // await loadSAV();
     if (saveDataToInject) {
       await parseAndInjectSaveData(saveDataToInject);
