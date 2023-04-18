@@ -177,7 +177,7 @@ export function Navbar() {
             </ul>
           </div>
           <div className="gap-2 d-navbar-end">
-            {pb.authStore ? (
+            {name ? (
               <div className="d-dropdown d-dropdown-end">
                 <label
                   tabIndex={0}
